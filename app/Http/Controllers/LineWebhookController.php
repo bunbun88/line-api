@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class LineWebhookController extends Controller
 {
@@ -58,6 +59,14 @@ class LineWebhookController extends Controller
                 $bmi < 30 => '肥満（1度）',
                 default => '肥満（2度以上）',
             };
+
+            // 条件付きでPDF教材を案内
+            if ($bmi >= 25) {
+                $link = $this->generatePdfLink('rails.pdf');
+                return "あなたのBMIは {$bmi} で、{$status} です。\n📄 以下の教材をお読みください（10分間有効）：\n{$link}";
+            }
+
+
             return "あなたのBMIは {$bmi} で、{$status} です。";
         }
 
@@ -113,5 +122,14 @@ class LineWebhookController extends Controller
         curl_close($ch);
 
         Log::info('LINE Response: ' . $result);
+    }
+
+    public function generatePdfLink($filename)
+    {
+        return URL::temporarySignedRoute(
+            'secure.pdf',
+            now()->addMinutes(10),
+            ['filename' => $filename]
+        );
     }
 }
