@@ -93,7 +93,7 @@ class LineWebhookController extends Controller
             return "あなたの血糖値は {$glucose} で、{$status}。";
         }
 
-        return "「身長170 体重65」や「尿酸値6.2」「血糖値95」のように送ってください。";
+        return "「身長1700 体重65」や「尿酸値6.2」「血糖値95」のように送ってください。";
     }
 
     private function replyToLine($replyToken, $replyText)
